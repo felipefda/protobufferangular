@@ -2,26 +2,73 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.2.
 
-## Development server
+Using rxjs to get some bin file and read it only with angular.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+# How to start
 
-## Code scaffolding
+Install protobufjs
+```
+npm install protobufjs --save
+```
+Create or use an example of your proto file. 
+This sample is of [Java Tutorial](https://developers.google.com/protocol-buffers/docs/javatutorial)
+```
+syntax = "proto2";
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+package tutorial;
 
-## Build
+option java_package = "com.example.tutorial";
+option java_outer_classname = "Person";
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  required string email = 3;
+}
 
-## Running unit tests
+```
+Convert your protocol buffer to addressbook.js file
+```
+node_modules/protobufjs/cli/bin/pbjs -t static-module -w commonjs -o protos/person.js protos/person.proto
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+If you have permission denied just give a chmod to protobuffjs files. This will need some further investigation but for now you won't need to do it into angular project.
+```
+chmod -R 777 node_modules/protobufjs
+```
+Create a service to get, serialize and deserialize messages.
+```
+ng g service person
+```
+Import you js protocol buffer file
+```
+import * as personprotojs from 'protos/person.js';
+```
+Create a model class to encapsule the object.
+```
+ng g class person
+```
+Simple object
+```
+export class Person {
+    private id : number;
+    private name : string;
+    private email : string;
 
-## Running end-to-end tests
+    public constructor(id : number, name : string, email : string) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+}
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+```
 
-## Further help
+Check app.component.ts
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+
+## Reference guide
+
+You can check more at [Protocol Buffers](https://developers.google.com/protocol-buffers).
+
